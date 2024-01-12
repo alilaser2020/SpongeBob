@@ -4,6 +4,18 @@ import random
 from pgzero import clock
 from pgzero.actor import Actor
 from pgzero.keyboard import keyboard
+from pgzero.loaders import sounds
+
+
+def collide_hamburger(actor):
+    """
+    A method for define actors (bob or patric) with hamburger (execute by pgzrun.go())
+    :param actor:
+    :return:
+    """
+    if actor.colliderect(ham):
+        sounds.point.play()
+        random_location(ham)
 
 
 def random_location(actor):
@@ -54,6 +66,7 @@ def draw():
     bob.draw()
     patrick.draw()
     plankton.draw()
+    ham.draw()
 
 
 def update():
@@ -74,8 +87,9 @@ def update():
         bob.y += bob.speed
 
     actor_correct_location(bob)
+    collide_hamburger(bob)
 
-    # Patric sectionk
+    # Patrick section
     if keyboard.d:
         patrick.x += patrick.speed
         patrick.image = "patric_right_prev_ui"
@@ -88,6 +102,7 @@ def update():
         patrick.y += patrick.speed
 
     actor_correct_location(patrick)
+    collide_hamburger(patrick)
 
     # Define Plankton
     plankton.x += plankton.x_dir
@@ -118,5 +133,9 @@ plankton.speed = 7
 random_location(plankton)
 plankton_random_direction()
 clock.schedule_interval(plankton_random_direction, 4)
+
+# Define hamburger
+ham = Actor("ham1_prev_ui")
+random_location(ham)
 
 pgzrun.go()
