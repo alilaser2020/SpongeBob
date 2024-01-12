@@ -9,6 +9,15 @@ from pgzero.keyboard import keyboard
 from pgzero.loaders import sounds
 
 
+def random_location_snail():
+    """
+    A method for determine a correct random location for snail (execute by pgzrun.go())
+    :return:
+    """
+    snail.x = random.randint(snail.width // 2, WIDTH - snail.width // 2)
+    snail.y = random.randint(HEIGHT // 2, HEIGHT - snail.height // 2)
+
+
 def collide_plankton(actor):
     """
     A method for reset points of every actor (bob and patric) when collide actor with plankton (execute by pgzrun.go())
@@ -138,6 +147,7 @@ def draw():
     """
     global pearl_flag
     back.draw()
+    snail.draw()
     shell.draw()
     if pearl_flag:
         speed_pearl.draw()
@@ -147,7 +157,7 @@ def draw():
     ham.draw()
     mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="yellow", gcolor="red",
                           scolor="black", shadow=(1, 1), alpha=0.9)
-    mode.screen.draw.text("Patrick Start score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow", gcolor="red",
+    mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow", gcolor="red",
                           scolor="black", shadow=(1, 1), alpha=0.9)
 
 
@@ -195,6 +205,18 @@ def update():
     plankton.y += plankton.y_dir
     actor_correct_location(plankton)
 
+    # Define snail
+    if snail.image == "snail_right":
+        snail.x += snail.speed
+        if snail.x >= WIDTH - snail.width // 2:
+            snail.image = "snail_left"
+            random_location_snail()
+    if snail.image == "snail_left":
+        snail.x -= snail.speed
+        if snail.x <= snail.width // 2:
+            snail.image = "snail_right"
+            random_location_snail()
+
 
 WIDTH = 1280
 HEIGHT = 720
@@ -238,5 +260,13 @@ shell.center = pearl_center
 speed_pearl = Actor("pearl1")
 speed_pearl.full_speed = 12
 speed_pearl.center = pearl_center
+
+# Define snail
+snail_directions = ["snail_right", "snail_left"]
+rand_snail_dir = random.choice(snail_directions)
+snail = Actor(rand_snail_dir)
+random_location_snail()
+snail.image = rand_snail_dir
+snail.speed = 2
 
 pgzrun.go()
