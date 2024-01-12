@@ -8,6 +8,24 @@ from pgzero.keyboard import keyboard
 from pgzero.loaders import sounds
 
 
+def resat_all():
+    """
+    A method for reset anything when redirect from play page (execute by pgzrun.go())
+    :return:
+    """
+    global pearl_flag
+    pearl_flag = True
+    bob.score = patrick.score = 0
+    bob.speed = patrick.speed = 5
+    bob.power = bob.collide_pearl_flag = bob.collide_snail_flag = False
+    patrick.power = patrick.collide_pearl_flag = patrick.collide_snail_flag = False
+    random_location(bob)
+    random_location(patrick)
+    random_location(plankton)
+    random_location_snail()
+    reset_pearl()
+
+
 def collide_snail(actor):
     """
     A method for when each actor collide with snail, it's speed will be slow (execute by pgzrun.go())
@@ -73,7 +91,7 @@ def reset_actor():
         bob.power = bob.collide_pearl_flag = False
     if patrick.collide_pearl_flag:
         patrick.speed = 5
-        patrick.power = patrick.collide_pearl_flag = False
+        patrick.power = bob.collide_pearl_flag = False
     if bob.collide_snail_flag:
         bob.speed = 5
         bob.collide_snail_flag = False
@@ -154,25 +172,61 @@ def actor_correct_location(actor):
         actor.y = -actor.height // 2
 
 
+def quit_func():
+    """
+    A method for existing from game after 4 seconds delay (execute by pgzrun.go())
+    :return:
+    """
+    quit()
+
+
+def on_key_down():
+    """
+    A method for occurrence en event when press down a specific key on keyboard (execute by pgzrun.go())
+    :return:
+    """
+    global status, pearl_list
+    if keyboard.space and status == "home":
+        status = "play"
+        clock.schedule_interval(plankton_random_direction, 4)
+    if keyboard.h and status != "home":
+        status = "home"
+        resat_all()
+    if keyboard.p and status != "play":
+        status = "play"
+        resat_all()
+    if keyboard.escape:
+        status = "end"
+        clock.schedule(quit_func, 4)
+    if keyboard.c and status != "end":
+        quit()
+
+
 def draw():
     """
     A method for drawing anything with any change (execute by pgzrun.go())
     :return:
     """
-    global pearl_flag
-    back.draw()
-    snail.draw()
-    shell.draw()
-    if pearl_flag:
-        pearl.draw()
-    bob.draw()
-    patrick.draw()
-    plankton.draw()
-    ham.draw()
-    mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="yellow", gcolor="red",
-                          scolor="black", shadow=(1, 1), alpha=0.9)
-    mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow", gcolor="red",
-                          scolor="black", shadow=(1, 1), alpha=0.9)
+    global status, pearl_flag
+    if status == "home":
+        mode.screen.blit("home", (0, 0))
+    elif status == "play":
+        back.draw()
+        snail.draw()
+        shell.draw()
+        if pearl_flag:
+            pearl.draw()
+        bob.draw()
+        patrick.draw()
+        plankton.draw()
+        ham.draw()
+        mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="yellow", gcolor="red",
+                              scolor="black", shadow=(1, 1), alpha=0.9)
+        mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow",
+                              gcolor="red",
+                              scolor="black", shadow=(1, 1), alpha=0.9)
+    elif status == "end":
+        mode.screen.blit("end", (0, 0))
 
 
 def update():
@@ -181,61 +235,63 @@ def update():
     :return:
     """
     # Bob section
-    if keyboard.right:
-        bob.x += bob.speed
-        bob.image = "bob_right_prev_ui"
-    if keyboard.left:
-        bob.x -= bob.speed
-        bob.image = "bob_left_prev_ui"
-    if keyboard.up:
-        bob.y -= bob.speed
-    if keyboard.down:
-        bob.y += bob.speed
+    if status == "play":
+        if keyboard.right:
+            bob.x += bob.speed
+            bob.image = "bob_right_prev_ui"
+        if keyboard.left:
+            bob.x -= bob.speed
+            bob.image = "bob_left_prev_ui"
+        if keyboard.up:
+            bob.y -= bob.speed
+        if keyboard.down:
+            bob.y += bob.speed
 
-    actor_correct_location(bob)
-    collide_hamburger(bob)
-    collide_pearl(bob, pearl)
-    collide_plankton(bob)
-    collide_snail(bob)
+        actor_correct_location(bob)
+        collide_hamburger(bob)
+        collide_pearl(bob, pearl)
+        collide_plankton(bob)
+        collide_snail(bob)
 
-    # Patrick section
-    if keyboard.d:
-        patrick.x += patrick.speed
-        patrick.image = "patric_right_prev_ui"
-    if keyboard.a:
-        patrick.x -= patrick.speed
-        patrick.image = "patric_left_prev_ui"
-    if keyboard.w:
-        patrick.y -= patrick.speed
-    if keyboard.s:
-        patrick.y += patrick.speed
+        # Patrick section
+        if keyboard.d:
+            patrick.x += patrick.speed
+            patrick.image = "patric_right_prev_ui"
+        if keyboard.a:
+            patrick.x -= patrick.speed
+            patrick.image = "patric_left_prev_ui"
+        if keyboard.w:
+            patrick.y -= patrick.speed
+        if keyboard.s:
+            patrick.y += patrick.speed
 
-    actor_correct_location(patrick)
-    collide_hamburger(patrick)
-    collide_pearl(patrick, pearl)
-    collide_plankton(patrick)
-    collide_snail(patrick)
+        actor_correct_location(patrick)
+        collide_hamburger(patrick)
+        collide_pearl(patrick, pearl)
+        collide_plankton(patrick)
+        collide_snail(patrick)
 
-    # Define Plankton
-    plankton.x += plankton.x_dir
-    plankton.y += plankton.y_dir
-    actor_correct_location(plankton)
+        # Define Plankton
+        plankton.x += plankton.x_dir
+        plankton.y += plankton.y_dir
+        actor_correct_location(plankton)
 
-    # Define snail
-    if snail.image == "snail_right":
-        snail.x += snail.speed
-        if snail.x >= WIDTH - snail.width // 2:
-            snail.image = "snail_left"
-            # random_location_snail()
-    if snail.image == "snail_left":
-        snail.x -= snail.speed
-        if snail.x <= snail.width // 2:
-            snail.image = "snail_right"
-            # random_location_snail()
+        # Define snail
+        if snail.image == "snail_right":
+            snail.x += snail.speed
+            if snail.x >= WIDTH - snail.width // 2:
+                snail.image = "snail_left"
+                # random_location_snail()
+        if snail.image == "snail_left":
+            snail.x -= snail.speed
+            if snail.x <= snail.width // 2:
+                snail.image = "snail_right"
+                # random_location_snail()
 
 
 WIDTH = 1280
 HEIGHT = 720
+status = "home"
 TITLE = "SpongeBob"
 pearl_flag = True
 pearl_center = (940, 550)
@@ -258,12 +314,11 @@ patrick.speed = 5
 patrick.score = 0
 patrick.power = patrick.collide_pearl_flag = patrick.collide_snail_flag = False
 
-# Define plankton
+# Define plankton"plankton_right"
 plankton = Actor("plankton_right")
 plankton.speed = 7
 random_location(plankton)
 plankton_random_direction()
-clock.schedule_interval(plankton_random_direction, 4)
 
 # Define hamburger
 ham = Actor("ham1_prev_ui")
