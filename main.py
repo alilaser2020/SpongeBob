@@ -37,29 +37,31 @@ def update():
     """
     # Bob section
     if keyboard.right:
-        bob.x += 5
+        bob.x += bob.speed
     if keyboard.left:
-        bob.x -= 5
+        bob.x -= bob.speed
     if keyboard.up:
-        bob.y -= 5
+        bob.y -= bob.speed
     if keyboard.down:
-        bob.y += 5
+        bob.y += bob.speed
 
     actor_correct_location(bob)
 
     # Patrick section
     if keyboard.d:
-        patrick.x += 5
+        patrick.x += patrick.speed
     if keyboard.a:
-        patrick.x -= 5
+        patrick.x -= patrick.speed
     if keyboard.w:
-        patrick.y -= 5
+        patrick.y -= patrick.speed
     if keyboard.s:
-        patrick.y += 5
+        patrick.y += patrick.speed
 
     actor_correct_location(patrick)
 
     # Define Plankton
+    plankton.x += plankton.x_dir
+    plankton.y += plankton.y_dir
     actor_correct_location(plankton)
 
 
@@ -74,15 +76,19 @@ back = Actor("back")
 bob = Actor("bob_right_prev_ui")
 bob.x = 300
 bob.y = 550
+bob.speed = 5
 
 # Define patrick
 patrick = Actor("patric_left_prev_ui")
 patrick.x = 950
 patrick.y = 450
+patrick.speed = 5
 
 # Define plankton
 plankton = Actor("plankton_right")
 plankton.x = WIDTH // 2
 plankton.y = HEIGHT * 0.7
+plankton.speed = 7
+plankton.x_dir = plankton.y_dir = plankton.speed
 
 pgzrun.go()
