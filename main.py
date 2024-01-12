@@ -9,6 +9,64 @@ from pgzero.keyboard import keyboard
 from pgzero.loaders import sounds
 
 
+def reset_pearl():
+    """
+    A method for reset pearl location (execute by pgzrun.go())
+    :return:
+    """
+    global pearl_flag
+    pearl_flag = True
+
+
+def reset_bob():
+    """
+    A method for reset attributes of bob (execute by pgzrun.go())
+    :return:
+    """
+    bob.speed = 5
+
+
+def reset_patric():
+    """
+    A method for reset attributes of bob (execute by pgzrun.go())
+    :return:
+    """
+    patrick.speed = 5
+
+
+def update_actor(actor, pearl):
+    """
+    A method for updating attributes of each actor when collide with specific pearl (execute by pgzrun.go())
+    :param actor:
+    :param pearl:
+    :return:
+    """
+    global pearl_flag
+    if pearl_flag:
+        sounds.energetic.play()
+        actor.speed = pearl.full_speed
+        pearl_flag = False
+
+
+def collide_pearl(actor, pearl):
+    """
+    A method for determine each actors (bob or patric) when collide with specific pearl (execute by pgzrun.go())
+    :param actor:
+    :param pearl:
+    :return:
+    """
+    global pearl_flag
+    if pearl_flag:
+        if actor.colliderect(pearl) and pearl == speed_pearl and actor == bob:
+            update_actor(actor, pearl)
+            clock.schedule_unique(reset_bob, 10)
+            clock.schedule_unique(reset_pearl, 15)
+        if actor.colliderect(pearl) and pearl == speed_pearl and actor == patrick:
+            update_actor(actor, pearl)
+            clock.schedule_unique(reset_patric, 10)
+            clock.schedule_unique(reset_pearl, 15)
+
+
 def collide_hamburger(actor):
     """
     A method for define actors (bob or patric) with hamburger (execute by pgzrun.go())
@@ -65,7 +123,11 @@ def draw():
     A method for drawing anything with any change (execute by pgzrun.go())
     :return:
     """
+    global pearl_flag
     back.draw()
+    shell.draw()
+    if pearl_flag:
+        speed_pearl.draw()
     bob.draw()
     patrick.draw()
     plankton.draw()
@@ -95,6 +157,7 @@ def update():
 
     actor_correct_location(bob)
     collide_hamburger(bob)
+    collide_pearl(bob, speed_pearl)
 
     # Patrick section
     if keyboard.d:
@@ -110,6 +173,7 @@ def update():
 
     actor_correct_location(patrick)
     collide_hamburger(patrick)
+    collide_pearl(patrick, speed_pearl)
 
     # Define Plankton
     plankton.x += plankton.x_dir
@@ -120,6 +184,8 @@ def update():
 WIDTH = 1280
 HEIGHT = 720
 TITLE = "SpongeBob"
+pearl_flag = True
+pearl_center = (940, 550)
 mode = sys.modules["__main__"]
 
 # Define background
@@ -148,5 +214,14 @@ clock.schedule_interval(plankton_random_direction, 4)
 ham = Actor("ham1_prev_ui")
 random_location(ham)
 ham.point = 10
+
+# Define shel
+shell = Actor("shell")
+shell.center = pearl_center
+
+# Define speed pearl
+speed_pearl = Actor("pearl1")
+speed_pearl.full_speed = 12
+speed_pearl.center = pearl_center
 
 pgzrun.go()
