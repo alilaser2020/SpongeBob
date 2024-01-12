@@ -9,6 +9,19 @@ from pgzero.keyboard import keyboard
 from pgzero.loaders import sounds
 
 
+def collide_plankton(actor):
+    """
+    A method for reset points of every actor (bob and patric) when collide actor with plankton (execute by pgzrun.go())
+    :param actor:
+    :return:
+    """
+    if actor.colliderect(plankton):
+        sounds.lose.play()
+        actor.score = 0
+        actor.speed = 5
+        random_location(actor)
+
+
 def reset_pearl():
     """
     A method for reset pearl location (execute by pgzrun.go())
@@ -134,7 +147,7 @@ def draw():
     ham.draw()
     mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="yellow", gcolor="red",
                           scolor="black", shadow=(1, 1), alpha=0.9)
-    mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow", gcolor="red",
+    mode.screen.draw.text("Patrick Start score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow", gcolor="red",
                           scolor="black", shadow=(1, 1), alpha=0.9)
 
 
@@ -158,6 +171,7 @@ def update():
     actor_correct_location(bob)
     collide_hamburger(bob)
     collide_pearl(bob, speed_pearl)
+    collide_plankton(bob)
 
     # Patrick section
     if keyboard.d:
@@ -174,6 +188,7 @@ def update():
     actor_correct_location(patrick)
     collide_hamburger(patrick)
     collide_pearl(patrick, speed_pearl)
+    collide_plankton(patrick)
 
     # Define Plankton
     plankton.x += plankton.x_dir
