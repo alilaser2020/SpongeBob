@@ -1,3 +1,5 @@
+import sys
+
 import pgzrun
 import random
 
@@ -16,10 +18,6 @@ def collide_hamburger(actor):
     if actor.colliderect(ham):
         sounds.point.play()
         actor.score += ham.point
-        if actor == bob:
-            print(f"Bob score: {actor.score}")
-        elif actor == patrick:
-            print(f"Patric score: {actor.score}")
         random_location(ham)
 
 
@@ -72,6 +70,10 @@ def draw():
     patrick.draw()
     plankton.draw()
     ham.draw()
+    mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="yellow", gcolor="red",
+                          scolor="black", shadow=(1, 1), alpha=0.9)
+    mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow", gcolor="red",
+                          scolor="black", shadow=(1, 1), alpha=0.9)
 
 
 def update():
@@ -118,6 +120,7 @@ def update():
 WIDTH = 1280
 HEIGHT = 720
 TITLE = "SpongeBob"
+mode = sys.modules["__main__"]
 
 # Define background
 back = Actor("back")
