@@ -15,6 +15,11 @@ def collide_hamburger(actor):
     """
     if actor.colliderect(ham):
         sounds.point.play()
+        actor.score += ham.point
+        if actor == bob:
+            print(f"Bob score: {actor.score}")
+        elif actor == patrick:
+            print(f"Patric score: {actor.score}")
         random_location(ham)
 
 
@@ -121,11 +126,13 @@ back = Actor("back")
 bob = Actor("bob_right_prev_ui")
 random_location(bob)
 bob.speed = 5
+bob.score = 0
 
 # Define patrick
 patrick = Actor("patric_left_prev_ui")
 random_location(patrick)
 patrick.speed = 5
+patrick.score = 0
 
 # Define plankton
 plankton = Actor("plankton_right")
@@ -137,5 +144,6 @@ clock.schedule_interval(plankton_random_direction, 4)
 # Define hamburger
 ham = Actor("ham1_prev_ui")
 random_location(ham)
+ham.point = 10
 
 pgzrun.go()
