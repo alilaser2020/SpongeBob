@@ -1,6 +1,22 @@
 import pgzrun
+import random
+
+from pgzero import clock
 from pgzero.actor import Actor
 from pgzero.keyboard import keyboard
+
+
+def plankton_random_direction():
+    """
+    A method for determine a random direction for plankton (execute by pgzrun.go())
+    :return:
+    """
+    plankton.x_dir = random.randint(-plankton.speed, plankton.speed)
+    plankton.y_dir = random.randint(-plankton.speed, plankton.speed)
+    if plankton.x_dir > 0:
+        plankton.image = "plankton_right"
+    else:
+        plankton.image = "plankton_left"
 
 
 def actor_correct_location(actor):
@@ -90,9 +106,8 @@ patrick.speed = 5
 
 # Define plankton
 plankton = Actor("plankton_right")
-plankton.x = WIDTH // 2
-plankton.y = HEIGHT * 0.7
 plankton.speed = 7
-plankton.x_dir = plankton.y_dir = plankton.speed
+plankton_random_direction()
+clock.schedule_interval(plankton_random_direction, 4)
 
 pgzrun.go()
