@@ -1,5 +1,6 @@
 import pgzrun
 from pgzero.actor import Actor
+from pgzero.keyboard import keyboard
 
 
 def draw():
@@ -18,7 +19,15 @@ def update():
     A method for updating and refresh anything 60 times per second (execute by pgzrun.go())
     :return:
     """
-    pass
+    # Bob section
+    if keyboard.right:
+        bob.x += bob.speed
+    if keyboard.left:
+        bob.x -= bob.speed
+    if keyboard.up:
+        bob.y -= bob.speed
+    if keyboard.down:
+        bob.y += bob.speed
 
 
 WIDTH = 1280
@@ -32,8 +41,9 @@ back = Actor("back")
 bob = Actor("bob_right_prev_ui")
 bob.x = 300
 bob.y = 550
+bob.speed = 5
 
-# Define patric
+# Define patrick
 patrick = Actor("patric_left_prev_ui")
 patrick.x = 950
 patrick.y = 450
