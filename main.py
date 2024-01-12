@@ -1,5 +1,4 @@
 import sys
-
 import pgzrun
 import random
 
@@ -7,6 +6,23 @@ from pgzero import clock
 from pgzero.actor import Actor
 from pgzero.keyboard import keyboard
 from pgzero.loaders import sounds
+
+
+def collide_snail(actor):
+    """
+    A method for when each actor collide with snail, it's speed will be slow (execute by pgzrun.go())
+    :param actor:
+    :return:
+    """
+    global pearl_flag
+    if snail.colliderect(actor) and actor == bob:
+        sounds.snail.play()
+        actor.speed = snail.speed
+        clock.schedule_unique(reset_bob, 5)
+    if snail.colliderect(actor) and actor == patrick:
+        sounds.snail.play()
+        actor.speed = snail.speed
+        clock.schedule_unique(reset_patric, 5)
 
 
 def random_location_snail():
@@ -157,7 +173,7 @@ def draw():
     ham.draw()
     mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="yellow", gcolor="red",
                           scolor="black", shadow=(1, 1), alpha=0.9)
-    mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow", gcolor="red",
+    mode.screen.draw.text("Patrick star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow", gcolor="red",
                           scolor="black", shadow=(1, 1), alpha=0.9)
 
 
@@ -182,6 +198,7 @@ def update():
     collide_hamburger(bob)
     collide_pearl(bob, speed_pearl)
     collide_plankton(bob)
+    collide_snail(bob)
 
     # Patrick section
     if keyboard.d:
@@ -199,6 +216,7 @@ def update():
     collide_hamburger(patrick)
     collide_pearl(patrick, speed_pearl)
     collide_plankton(patrick)
+    collide_snail(patrick)
 
     # Define Plankton
     plankton.x += plankton.x_dir
@@ -267,6 +285,6 @@ rand_snail_dir = random.choice(snail_directions)
 snail = Actor(rand_snail_dir)
 random_location_snail()
 snail.image = rand_snail_dir
-snail.speed = 2
+snail.speed = 1
 
 pgzrun.go()
