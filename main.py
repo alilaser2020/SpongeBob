@@ -6,6 +6,16 @@ from pgzero.actor import Actor
 from pgzero.keyboard import keyboard
 
 
+def random_location(actor):
+    """
+    A method for determine a random location for each actors in game's page (execute by pgzrun.go())
+    :param actor:
+    :return:
+    """
+    actor.x = random.randint(actor.width // 2, WIDTH - actor.width // 2)
+    actor.y = random.randint(actor.height // 2, HEIGHT - actor.height // 2)
+
+
 def plankton_random_direction():
     """
     A method for determine a random direction for plankton (execute by pgzrun.go())
@@ -65,7 +75,7 @@ def update():
 
     actor_correct_location(bob)
 
-    # Patrick section
+    # Patric sectionk
     if keyboard.d:
         patrick.x += patrick.speed
         patrick.image = "patric_right_prev_ui"
@@ -94,19 +104,18 @@ back = Actor("back")
 
 # Define bob
 bob = Actor("bob_right_prev_ui")
-bob.x = 300
-bob.y = 550
+random_location(bob)
 bob.speed = 5
 
 # Define patrick
 patrick = Actor("patric_left_prev_ui")
-patrick.x = 950
-patrick.y = 450
+random_location(patrick)
 patrick.speed = 5
 
 # Define plankton
 plankton = Actor("plankton_right")
 plankton.speed = 7
+random_location(plankton)
 plankton_random_direction()
 clock.schedule_interval(plankton_random_direction, 4)
 
