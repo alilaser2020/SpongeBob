@@ -29,6 +29,16 @@ def update():
     if keyboard.down:
         bob.y += bob.speed
 
+    # Patrick section
+    if keyboard.d:
+        patrick.x += patrick.speed
+    if keyboard.a:
+        patrick.x -= patrick.speed
+    if keyboard.w:
+        patrick.y -= patrick.speed
+    if keyboard.s:
+        patrick.y += patrick.speed
+
 
 WIDTH = 1280
 HEIGHT = 720
@@ -47,6 +57,7 @@ bob.speed = 5
 patrick = Actor("patric_left_prev_ui")
 patrick.x = 950
 patrick.y = 450
+patrick.speed = 5
 
 # Define plankton
 plankton = Actor("plankton_right")
