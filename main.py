@@ -38,8 +38,10 @@ def update():
     # Bob section
     if keyboard.right:
         bob.x += bob.speed
+        bob.image = "bob_right_prev_ui"
     if keyboard.left:
         bob.x -= bob.speed
+        bob.image = "bob_left_prev_ui"
     if keyboard.up:
         bob.y -= bob.speed
     if keyboard.down:
@@ -50,8 +52,10 @@ def update():
     # Patrick section
     if keyboard.d:
         patrick.x += patrick.speed
+        patrick.image = "patric_right_prev_ui"
     if keyboard.a:
         patrick.x -= patrick.speed
+        patrick.image = "patric_left_prev_ui"
     if keyboard.w:
         patrick.y -= patrick.speed
     if keyboard.s:
