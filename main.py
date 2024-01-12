@@ -15,14 +15,14 @@ def collide_snail(actor):
     :return:
     """
     global pearl_flag
-    if snail.colliderect(actor) and actor == bob:
+    if snail.colliderect(actor) and actor.power:
+        sounds.jump.play()
+        random_location_snail()
+    if snail.colliderect(actor) and not actor.power:
         sounds.snail.play()
         actor.speed = snail.speed
-        clock.schedule_unique(reset_bob, 5)
-    if snail.colliderect(actor) and actor == patrick:
-        sounds.snail.play()
-        actor.speed = snail.speed
-        clock.schedule_unique(reset_patric, 5)
+        actor.collide_snail_flag = True
+        clock.schedule_unique(reset_actor, 5)
 
 
 def random_location_snail():
@@ -40,7 +40,10 @@ def collide_plankton(actor):
     :param actor:
     :return:
     """
-    if actor.colliderect(plankton):
+    if actor.colliderect(plankton) and actor.power:
+        sounds.jump.play()
+        random_location(plankton)
+    elif actor.colliderect(plankton) and not actor.power:
         sounds.lose.play()
         actor.score = 0
         actor.speed = 5
@@ -52,38 +55,31 @@ def reset_pearl():
     A method for reset pearl location (execute by pgzrun.go())
     :return:
     """
-    global pearl_flag
+    global pearl_list, pearl_flag
     pearl_flag = True
+    if random.randint(0, 100) >= 20:
+        pearl.image = pearl_list[0]
+    else:
+        pearl.image = pearl_list[1]
 
 
-def reset_bob():
+def reset_actor():
     """
     A method for reset attributes of bob (execute by pgzrun.go())
     :return:
     """
-    bob.speed = 5
-
-
-def reset_patric():
-    """
-    A method for reset attributes of bob (execute by pgzrun.go())
-    :return:
-    """
-    patrick.speed = 5
-
-
-def update_actor(actor, pearl):
-    """
-    A method for updating attributes of each actor when collide with specific pearl (execute by pgzrun.go())
-    :param actor:
-    :param pearl:
-    :return:
-    """
-    global pearl_flag
-    if pearl_flag:
-        sounds.energetic.play()
-        actor.speed = pearl.full_speed
-        pearl_flag = False
+    if bob.collide_pearl_flag:
+        bob.speed = 5
+        bob.power = bob.collide_pearl_flag = False
+    if patrick.collide_pearl_flag:
+        patrick.speed = 5
+        patrick.power = patrick.collide_pearl_flag = False
+    if bob.collide_snail_flag:
+        bob.speed = 5
+        bob.collide_snail_flag = False
+    if patrick.collide_snail_flag:
+        patrick.speed = 5
+        patrick.collide_snail_flag = False
 
 
 def collide_pearl(actor, pearl):
@@ -94,15 +90,17 @@ def collide_pearl(actor, pearl):
     :return:
     """
     global pearl_flag
-    if pearl_flag:
-        if actor.colliderect(pearl) and pearl == speed_pearl and actor == bob:
-            update_actor(actor, pearl)
-            clock.schedule_unique(reset_bob, 10)
-            clock.schedule_unique(reset_pearl, 15)
-        if actor.colliderect(pearl) and pearl == speed_pearl and actor == patrick:
-            update_actor(actor, pearl)
-            clock.schedule_unique(reset_patric, 10)
-            clock.schedule_unique(reset_pearl, 15)
+    if actor.colliderect(pearl) and pearl_flag:
+        pearl_flag = False
+        actor.speed = pearl.full_speed
+        actor.collide_pearl_flag = True
+        if pearl.image == "pearl2":
+            actor.power = True
+            sounds.power.play()
+        else:
+            sounds.energetic.play()
+        clock.schedule_unique(reset_actor, 10)
+        clock.schedule_unique(reset_pearl, 15)
 
 
 def collide_hamburger(actor):
@@ -166,14 +164,14 @@ def draw():
     snail.draw()
     shell.draw()
     if pearl_flag:
-        speed_pearl.draw()
+        pearl.draw()
     bob.draw()
     patrick.draw()
     plankton.draw()
     ham.draw()
     mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="yellow", gcolor="red",
                           scolor="black", shadow=(1, 1), alpha=0.9)
-    mode.screen.draw.text("Patrick star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow", gcolor="red",
+    mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow", gcolor="red",
                           scolor="black", shadow=(1, 1), alpha=0.9)
 
 
@@ -196,7 +194,7 @@ def update():
 
     actor_correct_location(bob)
     collide_hamburger(bob)
-    collide_pearl(bob, speed_pearl)
+    collide_pearl(bob, pearl)
     collide_plankton(bob)
     collide_snail(bob)
 
@@ -214,7 +212,7 @@ def update():
 
     actor_correct_location(patrick)
     collide_hamburger(patrick)
-    collide_pearl(patrick, speed_pearl)
+    collide_pearl(patrick, pearl)
     collide_plankton(patrick)
     collide_snail(patrick)
 
@@ -228,12 +226,12 @@ def update():
         snail.x += snail.speed
         if snail.x >= WIDTH - snail.width // 2:
             snail.image = "snail_left"
-            random_location_snail()
+            # random_location_snail()
     if snail.image == "snail_left":
         snail.x -= snail.speed
         if snail.x <= snail.width // 2:
             snail.image = "snail_right"
-            random_location_snail()
+            # random_location_snail()
 
 
 WIDTH = 1280
@@ -251,12 +249,14 @@ bob = Actor("bob_right_prev_ui")
 random_location(bob)
 bob.speed = 5
 bob.score = 0
+bob.power = bob.collide_pearl_flag = bob.collide_snail_flag = False
 
 # Define patrick
 patrick = Actor("patric_left_prev_ui")
 random_location(patrick)
 patrick.speed = 5
 patrick.score = 0
+patrick.power = patrick.collide_pearl_flag = patrick.collide_snail_flag = False
 
 # Define plankton
 plankton = Actor("plankton_right")
@@ -274,10 +274,15 @@ ham.point = 10
 shell = Actor("shell")
 shell.center = pearl_center
 
-# Define speed pearl
-speed_pearl = Actor("pearl1")
-speed_pearl.full_speed = 12
-speed_pearl.center = pearl_center
+# Define pearls
+pearl_list = ["pearl1", "pearl2"]
+if random.randint(0, 100) >= 20:
+    random_pearl = pearl_list[0]
+else:
+    random_pearl = pearl_list[1]
+pearl = Actor(random_pearl)
+pearl.full_speed = 12
+pearl.center = pearl_center
 
 # Define snail
 snail_directions = ["snail_right", "snail_left"]
