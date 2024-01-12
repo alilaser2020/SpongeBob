@@ -8,6 +8,9 @@ def draw():
     :return:
     """
     back.draw()
+    bob.draw()
+    patrick.draw()
+    plankton.draw()
 
 
 def update():
@@ -15,7 +18,7 @@ def update():
     A method for updating and refresh anything 60 times per second (execute by pgzrun.go())
     :return:
     """
-    ...
+    pass
 
 
 WIDTH = 1280
@@ -24,5 +27,20 @@ TITLE = "SpongeBob"
 
 # Define background
 back = Actor("back")
+
+# Define bob
+bob = Actor("bob_right_prev_ui")
+bob.x = 300
+bob.y = 550
+
+# Define patric
+patrick = Actor("patric_left_prev_ui")
+patrick.x = 950
+patrick.y = 450
+
+# Define plankton
+plankton = Actor("plankton_right")
+plankton.x = WIDTH//2
+plankton.y = HEIGHT * 0.7
 
 pgzrun.go()
