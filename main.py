@@ -1,8 +1,10 @@
 import sys
 import pgzrun
 import random
+import pygame.display
 
 from pgzero import clock
+from ctypes import windll
 from pgzero.actor import Actor
 from pgzero.keyboard import keyboard
 from pgzero.loaders import sounds
@@ -98,7 +100,6 @@ def reset_actor():
     if patrick.collide_snail_flag:
         patrick.speed = 5
         patrick.collide_snail_flag = False
-
 
 
 def collide_pearl(actor, pearl):
@@ -201,6 +202,10 @@ def on_key_down():
     if keyboard.p and status != "play":
         status = "play"
         resat_all()
+    if keyboard.f:
+        mode.screen.surface = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+    if keyboard.n:
+        mode.screen.surface = pygame.display.set_mode((WIDTH, HEIGHT))
     if keyboard.escape:
         status = "end"
         clock.schedule(quit_func, 4)
@@ -228,19 +233,19 @@ def draw():
         ham.draw()
         mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="yellow", gcolor="red",
                               scolor="black", shadow=(1, 1), alpha=0.9)
-        mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow",
+        mode.screen.draw.text("Patrick Start score: : " + str(patrick.score), (880, 10), fontsize=50, color="yellow",
                               gcolor="red", scolor="black", shadow=(1, 1), alpha=0.9)
     elif status == "bob_win":
         mode.screen.blit("bob_win", (0, 0))
         mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=60, color="red", gcolor="blue"
                               , scolor="green", shadow=(2, 2), alpha=0.9)
-        mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="red", gcolor="blue"
+        mode.screen.draw.text("Patrick Start score: " + str(patrick.score), (880, 10), fontsize=50, color="red", gcolor="blue"
                               , scolor="black", shadow=(1, 1), alpha=0.9)
     elif status == "patric_win":
         mode.screen.blit("patric_win", (0, 0))
         mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="red", gcolor="blue"
                               , scolor="black", shadow=(1, 1), alpha=0.9)
-        mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (790, 10), fontsize=60, color="red", gcolor="blue"
+        mode.screen.draw.text("Patrick Start score: " + str(patrick.score), (790, 10), fontsize=60, color="red", gcolor="blue"
                               , scolor="green", shadow=(2, 2), alpha=0.9)
     elif status == "end":
         mode.screen.blit("end", (0, 0))
@@ -315,6 +320,8 @@ pearl_center = (940, 550)
 mode = sys.modules["__main__"]
 
 # Define background
+hwnd = pygame.display.get_wm_info()["window"]
+windll.user32.MoveWindow(hwnd, 310, 150, WIDTH, HEIGHT, False)
 back = Actor("back")
 
 # Define bob
@@ -348,7 +355,6 @@ shell.center = pearl_center
 
 # Define pearls
 pearl_list = ["pearl1", "pearl2"]
-random_pearl = random.choice(pearl_list)
 if random.randint(0, 100) >= 20:
     random_pearl = pearl_list[0]
 else:
