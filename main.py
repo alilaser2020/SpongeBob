@@ -221,6 +221,15 @@ def draw():
     global pearl_flag
     if status == "home":
         mode.screen.blit("home", (0, 0))
+        box1 = pygame.Rect((0, 0), (600, 70))
+        box1.center = (WIDTH//2, HEIGHT * 0.88)
+        mode.screen.draw.filled_rect(box1, (255, 255, 0))
+        mode.screen.draw.text("Press space for play", center=(WIDTH//2, HEIGHT * 0.88), fontsize=60, color="blue",
+                              scolor="black", shadow=(1, 1))
+        box2 = pygame.Rect((0, 0), (600, 55))
+        box2.center = (WIDTH//2, HEIGHT * 0.963)
+        mode.screen.draw.filled_rect(box2, (0, 255, 0))
+        mode.screen.draw.text("f: full screen, n: normal, h: home,\np: play, Esc, c: exit", center=(WIDTH//2, HEIGHT * 0.963), fontsize=40, color="black")
     elif status == "play":
         back.draw()
         snail.draw()
@@ -233,19 +242,19 @@ def draw():
         ham.draw()
         mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="yellow", gcolor="red",
                               scolor="black", shadow=(1, 1), alpha=0.9)
-        mode.screen.draw.text("Patrick Start score: : " + str(patrick.score), (880, 10), fontsize=50, color="yellow",
+        mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow",
                               gcolor="red", scolor="black", shadow=(1, 1), alpha=0.9)
     elif status == "bob_win":
         mode.screen.blit("bob_win", (0, 0))
         mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=60, color="red", gcolor="blue"
                               , scolor="green", shadow=(2, 2), alpha=0.9)
-        mode.screen.draw.text("Patrick Start score: " + str(patrick.score), (880, 10), fontsize=50, color="red", gcolor="blue"
+        mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="red", gcolor="blue"
                               , scolor="black", shadow=(1, 1), alpha=0.9)
     elif status == "patric_win":
         mode.screen.blit("patric_win", (0, 0))
         mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="red", gcolor="blue"
                               , scolor="black", shadow=(1, 1), alpha=0.9)
-        mode.screen.draw.text("Patrick Start score: " + str(patrick.score), (790, 10), fontsize=60, color="red", gcolor="blue"
+        mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (790, 10), fontsize=60, color="red", gcolor="blue"
                               , scolor="green", shadow=(2, 2), alpha=0.9)
     elif status == "end":
         mode.screen.blit("end", (0, 0))
@@ -331,7 +340,7 @@ bob.speed = 5
 bob.score = 0
 bob.power = bob.collide_pearl_flag = bob.collide_snail_flag = False
 
-# Define patrick
+# Define patric
 patrick = Actor("patric_left_prev_ui")
 random_location(patrick)
 patrick.speed = 5
