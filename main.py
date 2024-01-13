@@ -91,13 +91,14 @@ def reset_actor():
         bob.power = bob.collide_pearl_flag = False
     if patrick.collide_pearl_flag:
         patrick.speed = 5
-        patrick.power = bob.collide_pearl_flag = False
+        patrick.power = patrick.collide_pearl_flag = False
     if bob.collide_snail_flag:
         bob.speed = 5
         bob.collide_snail_flag = False
     if patrick.collide_snail_flag:
         patrick.speed = 5
         patrick.collide_snail_flag = False
+
 
 
 def collide_pearl(actor, pearl):
@@ -113,8 +114,8 @@ def collide_pearl(actor, pearl):
         actor.speed = pearl.full_speed
         actor.collide_pearl_flag = True
         if pearl.image == "pearl2":
-            actor.power = True
             sounds.power.play()
+            actor.power = True
         else:
             sounds.energetic.play()
         clock.schedule_unique(reset_actor, 10)
@@ -127,10 +128,15 @@ def collide_hamburger(actor):
     :param actor:
     :return:
     """
+    global status
     if actor.colliderect(ham):
         sounds.point.play()
         actor.score += ham.point
         random_location(ham)
+        if actor == bob and actor.score >= 50:
+            status = "bob_win"
+        if actor == patrick and actor.score >= 50:
+            status = "patric_win"
 
 
 def random_location(actor):
@@ -207,7 +213,7 @@ def draw():
     A method for drawing anything with any change (execute by pgzrun.go())
     :return:
     """
-    global status, pearl_flag
+    global pearl_flag
     if status == "home":
         mode.screen.blit("home", (0, 0))
     elif status == "play":
@@ -223,8 +229,19 @@ def draw():
         mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="yellow", gcolor="red",
                               scolor="black", shadow=(1, 1), alpha=0.9)
         mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow",
-                              gcolor="red",
-                              scolor="black", shadow=(1, 1), alpha=0.9)
+                              gcolor="red", scolor="black", shadow=(1, 1), alpha=0.9)
+    elif status == "bob_win":
+        mode.screen.blit("bob_win", (0, 0))
+        mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=60, color="red", gcolor="blue"
+                              , scolor="green", shadow=(2, 2), alpha=0.9)
+        mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="red", gcolor="blue"
+                              , scolor="black", shadow=(1, 1), alpha=0.9)
+    elif status == "patric_win":
+        mode.screen.blit("patric_win", (0, 0))
+        mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="red", gcolor="blue"
+                              , scolor="black", shadow=(1, 1), alpha=0.9)
+        mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (790, 10), fontsize=60, color="red", gcolor="blue"
+                              , scolor="green", shadow=(2, 2), alpha=0.9)
     elif status == "end":
         mode.screen.blit("end", (0, 0))
 
@@ -314,7 +331,7 @@ patrick.speed = 5
 patrick.score = 0
 patrick.power = patrick.collide_pearl_flag = patrick.collide_snail_flag = False
 
-# Define plankton"plankton_right"
+# Define plankton
 plankton = Actor("plankton_right")
 plankton.speed = 7
 random_location(plankton)
@@ -331,6 +348,7 @@ shell.center = pearl_center
 
 # Define pearls
 pearl_list = ["pearl1", "pearl2"]
+random_pearl = random.choice(pearl_list)
 if random.randint(0, 100) >= 20:
     random_pearl = pearl_list[0]
 else:
