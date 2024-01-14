@@ -10,6 +10,17 @@ from pgzero.loaders import sounds
 from pgzero.animation import animate
 
 
+def collide_crab(actor):
+    """
+    A method for collide each actor (bob or patric) with crab (execute by pgzrun.go())
+    :param actor:
+    :return:
+    """
+    if actor.colliderect(crab) and actor.power:
+        sounds.jump.play()
+        random_location(crab)
+
+
 def random_location_coin():
     """
     A method for call 'random_location()' function per 4 second for coin (execute by pgzrun.go())
@@ -323,6 +334,7 @@ def update():
         collide_pearl(bob, pearl)
         collide_plankton(bob)
         collide_snail(bob)
+        collide_crab(bob)
 
         # Patrick section
         if keyboard.d:
@@ -341,6 +353,7 @@ def update():
         collide_pearl(patrick, pearl)
         collide_plankton(patrick)
         collide_snail(patrick)
+        collide_crab(patrick)
 
         # Plankton section
         plankton.x += plankton.x_dir
