@@ -266,14 +266,26 @@ def draw():
         mode.screen.blit("bob_win", (0, 0))
         mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=60, color="red", gcolor="blue"
                               , scolor="green", shadow=(2, 2), alpha=0.9)
+        mode.screen.draw.text("Mr. Crab score: " + str(crab.score), center=(WIDTH // 2, 30), fontsize=50, color="red"
+                              , gcolor="blue", scolor="black", shadow=(1, 1), alpha=0.9)
         mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="red", gcolor="blue"
                               , scolor="black", shadow=(1, 1), alpha=0.9)
     elif status == "patric_win":
         mode.screen.blit("patric_win", (0, 0))
         mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="red", gcolor="blue"
                               , scolor="black", shadow=(1, 1), alpha=0.9)
-        mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (790, 10), fontsize=60, color="red", gcolor="blue"
+        mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (800, 10), fontsize=60, color="red", gcolor="blue"
                               , scolor="green", shadow=(2, 2), alpha=0.9)
+        mode.screen.draw.text("Mr. Crab score: " + str(crab.score), center=(WIDTH // 2 - 10, 30), fontsize=50, color="red"
+                              , gcolor="blue", scolor="black", shadow=(1, 1), alpha=0.9)
+    elif status == "crab_win":
+        mode.screen.blit("crab_win", (0, 0))
+        mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="red", gcolor="blue"
+                              , scolor="black", shadow=(1, 1), alpha=0.9)
+        mode.screen.draw.text("Mr. Crab score: " + str(crab.score), center=(WIDTH // 2 - 10, 30), fontsize=60, color="red"
+                              , gcolor="blue", scolor="green", shadow=(2, 2), alpha=0.9)
+        mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="red"
+                              , gcolor="blue", scolor="black", shadow=(1, 1), alpha=0.9)
     elif status == "timeout":
         mode.screen.fill((251, 86, 185))
         mode.screen.draw.text("Time out", center=(WIDTH // 2, HEIGHT // 2), fontsize=120, color="black")
@@ -331,8 +343,8 @@ def update():
         collide_snail(patrick)
 
         # Plankton section
-        plankton.x -= plankton.x_dir
-        plankton.y -= plankton.y_dir
+        plankton.x += plankton.x_dir
+        plankton.y += plankton.y_dir
         actor_correct_location(plankton)
 
         # Snail section
@@ -347,12 +359,14 @@ def update():
                 snail.image = "snail_right"
                 # random_location_snail()
 
-        # Crab section
+        # Mr. Crab section
         animate(crab, pos=(coin.x, coin.y))
         if crab.colliderect(coin):
             sounds.jiring.play()
             crab.score += coin.point
             random_location(coin)
+            if crab.score >= 200:
+                status = "crab_win"
         if coin.x > crab.x:
             crab.image = "crab_right"
         else:
@@ -364,9 +378,8 @@ HEIGHT = 720
 timer = 120
 status = "home"
 TITLE = "SpongeBob"
-pearl_flag = True
+pearl_flag = time_out_flag = True
 pearl_center = (940, 550)
-time_out_flag = True
 mode = sys.modules["__main__"]
 
 # Define background
@@ -431,5 +444,6 @@ clock.schedule_interval(random_location_coin, 4)
 crab = Actor("crab_right")
 crab.score = 0
 random_location(crab)
+animate(crab, pos=(coin.x, coin.y))
 
 pgzrun.go()
