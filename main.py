@@ -2,12 +2,12 @@ import sys
 import pgzrun
 import random
 import pygame.display
-
 from pgzero import clock
 from ctypes import windll
 from pgzero.actor import Actor
 from pgzero.keyboard import keyboard
 from pgzero.loaders import sounds
+from pgzero.animation import animate
 
 
 def random_location_coin():
@@ -26,8 +26,8 @@ def resat_all():
     global pearl_flag, timer, time_out_flag
     timer = 120
     pearl_flag = time_out_flag = True
-    bob.score = patrick.score = 0
     bob.speed = patrick.speed = 5
+    bob.score = patrick.score = crab.score = 0
     bob.power = bob.collide_pearl_flag = bob.collide_snail_flag = False
     patrick.power = patrick.collide_pearl_flag = patrick.collide_snail_flag = False
     random_location(bob)
@@ -252,10 +252,14 @@ def draw():
         plankton.draw()
         ham.draw()
         coin.draw()
+        crab.draw()
         mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="yellow", gcolor="red",
                               scolor="black", shadow=(1, 1), alpha=0.9)
         mode.screen.draw.text("Timer: " + str(round(timer)), (WIDTH // 2 - 130, 10), fontsize=70, color="yellow",
                               gcolor="red", scolor="black", shadow=(1, 1), alpha=0.9)
+        mode.screen.draw.text("Mr. Crab score: " + str(crab.score), (WIDTH // 2 - 140, HEIGHT - 50), fontsize=50,
+                              color="yellow"
+                              , gcolor="red", scolor="black", shadow=(1, 1), alpha=0.9)
         mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow",
                               gcolor="red", scolor="black", shadow=(1, 1), alpha=0.9)
     elif status == "bob_win":
@@ -326,12 +330,12 @@ def update():
         collide_plankton(patrick)
         collide_snail(patrick)
 
-        # Define Plankton
-        plankton.x += plankton.x_dir
-        plankton.y += plankton.y_dir
+        # Plankton section
+        plankton.x -= plankton.x_dir
+        plankton.y -= plankton.y_dir
         actor_correct_location(plankton)
 
-        # Define snail
+        # Snail section
         if snail.image == "snail_right":
             snail.x += snail.speed
             if snail.x >= WIDTH - snail.width // 2:
@@ -342,6 +346,17 @@ def update():
             if snail.x <= snail.width // 2:
                 snail.image = "snail_right"
                 # random_location_snail()
+
+        # Crab section
+        animate(crab, pos=(coin.x, coin.y))
+        if crab.colliderect(coin):
+            sounds.jiring.play()
+            crab.score += coin.point
+            random_location(coin)
+        if coin.x > crab.x:
+            crab.image = "crab_right"
+        else:
+            crab.image = "crab_left"
 
 
 WIDTH = 1280
@@ -408,7 +423,13 @@ snail.speed = 1
 
 # Define coin
 coin = Actor("coin")
+coin.point = 10
 random_location_coin()
 clock.schedule_interval(random_location_coin, 4)
+
+# Define crab
+crab = Actor("crab_right")
+crab.score = 0
+random_location(crab)
 
 pgzrun.go()
