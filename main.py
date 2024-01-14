@@ -15,12 +15,13 @@ def resat_all():
     A method for reset anything when redirect from play page (execute by pgzrun.go())
     :return:
     """
-    global pearl_flag
-    pearl_flag = True
-    bob.score = patrick.score = 0
-    bob.speed = patrick.speed = 5
+    global pearl_flag, timer, time_out_flag
+    timer = 120
+    pearl_flag = time_out_flag = True
     bob.power = bob.collide_pearl_flag = bob.collide_snail_flag = False
     patrick.power = patrick.collide_pearl_flag = patrick.collide_snail_flag = False
+    bob.score = patrick.score = 0
+    bob.speed = patrick.speed = 5
     random_location(bob)
     random_location(patrick)
     random_location(plankton)
@@ -218,7 +219,7 @@ def draw():
     A method for drawing anything with any change (execute by pgzrun.go())
     :return:
     """
-    global pearl_flag
+    global pearl_flag, status, timer, time_out_flag
     if status == "home":
         mode.screen.blit("home", (0, 0))
         box1 = pygame.Rect((0, 0), (600, 70))
@@ -242,6 +243,8 @@ def draw():
         ham.draw()
         mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="yellow", gcolor="red",
                               scolor="black", shadow=(1, 1), alpha=0.9)
+        mode.screen.draw.text("Timer: " + str(round(timer)), (WIDTH//2 - 130, 10), fontsize=70, color="yellow",
+                              gcolor="red", scolor="black", shadow=(1, 1), alpha=0.9)
         mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow",
                               gcolor="red", scolor="black", shadow=(1, 1), alpha=0.9)
     elif status == "bob_win":
@@ -256,6 +259,12 @@ def draw():
                               , scolor="black", shadow=(1, 1), alpha=0.9)
         mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (790, 10), fontsize=60, color="red", gcolor="blue"
                               , scolor="green", shadow=(2, 2), alpha=0.9)
+    elif status == "timeout":
+        mode.screen.fill((251, 86, 185))
+        mode.screen.draw.text("Time out", center=(WIDTH//2, HEIGHT//2), fontsize=120, color="black")
+        if time_out_flag:
+            sounds.timeout.play()
+            time_out_flag = False
     elif status == "end":
         mode.screen.blit("end", (0, 0))
 
@@ -266,7 +275,11 @@ def update():
     :return:
     """
     # Bob section
+    global status, timer
     if status == "play":
+        timer -= 1/60
+        if timer <= 0:
+            status = "timeout"
         if keyboard.right:
             bob.x += bob.speed
             bob.image = "bob_right_prev_ui"
@@ -322,10 +335,12 @@ def update():
 
 WIDTH = 1280
 HEIGHT = 720
+timer = 120
 status = "home"
 TITLE = "SpongeBob"
 pearl_flag = True
 pearl_center = (940, 550)
+time_out_flag = True
 mode = sys.modules["__main__"]
 
 # Define background
@@ -340,7 +355,7 @@ bob.speed = 5
 bob.score = 0
 bob.power = bob.collide_pearl_flag = bob.collide_snail_flag = False
 
-# Define patric
+# Define patrick
 patrick = Actor("patric_left_prev_ui")
 random_location(patrick)
 patrick.speed = 5
