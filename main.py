@@ -10,6 +10,14 @@ from pgzero.keyboard import keyboard
 from pgzero.loaders import sounds
 
 
+def random_location_coin():
+    """
+    A method for call 'random_location()' function per 4 second for coin (execute by pgzrun.go())
+    :return:
+    """
+    random_location(coin)
+
+
 def resat_all():
     """
     A method for reset anything when redirect from play page (execute by pgzrun.go())
@@ -18,13 +26,14 @@ def resat_all():
     global pearl_flag, timer, time_out_flag
     timer = 120
     pearl_flag = time_out_flag = True
-    bob.power = bob.collide_pearl_flag = bob.collide_snail_flag = False
-    patrick.power = patrick.collide_pearl_flag = patrick.collide_snail_flag = False
     bob.score = patrick.score = 0
     bob.speed = patrick.speed = 5
+    bob.power = bob.collide_pearl_flag = bob.collide_snail_flag = False
+    patrick.power = patrick.collide_pearl_flag = patrick.collide_snail_flag = False
     random_location(bob)
     random_location(patrick)
     random_location(plankton)
+    random_location(coin)
     random_location_snail()
     reset_pearl()
 
@@ -223,14 +232,15 @@ def draw():
     if status == "home":
         mode.screen.blit("home", (0, 0))
         box1 = pygame.Rect((0, 0), (600, 70))
-        box1.center = (WIDTH//2, HEIGHT * 0.88)
+        box1.center = (WIDTH // 2, HEIGHT * 0.88)
         mode.screen.draw.filled_rect(box1, (255, 255, 0))
-        mode.screen.draw.text("Press space for play", center=(WIDTH//2, HEIGHT * 0.88), fontsize=60, color="blue",
+        mode.screen.draw.text("Press space for play", center=(WIDTH // 2, HEIGHT * 0.88), fontsize=60, color="blue",
                               scolor="black", shadow=(1, 1))
         box2 = pygame.Rect((0, 0), (600, 55))
-        box2.center = (WIDTH//2, HEIGHT * 0.963)
+        box2.center = (WIDTH // 2, HEIGHT * 0.963)
         mode.screen.draw.filled_rect(box2, (0, 255, 0))
-        mode.screen.draw.text("f: full screen, n: normal, h: home,\np: play, Esc, c: exit", center=(WIDTH//2, HEIGHT * 0.963), fontsize=40, color="black")
+        mode.screen.draw.text("f: full screen, n: normal, h: home,\np: play, Esc, c: exit",
+                              center=(WIDTH // 2, HEIGHT * 0.963), fontsize=40, color="black")
     elif status == "play":
         back.draw()
         snail.draw()
@@ -241,9 +251,10 @@ def draw():
         patrick.draw()
         plankton.draw()
         ham.draw()
+        coin.draw()
         mode.screen.draw.text("SpongeBob score: " + str(bob.score), (10, 10), fontsize=50, color="yellow", gcolor="red",
                               scolor="black", shadow=(1, 1), alpha=0.9)
-        mode.screen.draw.text("Timer: " + str(round(timer)), (WIDTH//2 - 130, 10), fontsize=70, color="yellow",
+        mode.screen.draw.text("Timer: " + str(round(timer)), (WIDTH // 2 - 130, 10), fontsize=70, color="yellow",
                               gcolor="red", scolor="black", shadow=(1, 1), alpha=0.9)
         mode.screen.draw.text("Patrick Star score: " + str(patrick.score), (880, 10), fontsize=50, color="yellow",
                               gcolor="red", scolor="black", shadow=(1, 1), alpha=0.9)
@@ -261,7 +272,7 @@ def draw():
                               , scolor="green", shadow=(2, 2), alpha=0.9)
     elif status == "timeout":
         mode.screen.fill((251, 86, 185))
-        mode.screen.draw.text("Time out", center=(WIDTH//2, HEIGHT//2), fontsize=120, color="black")
+        mode.screen.draw.text("Time out", center=(WIDTH // 2, HEIGHT // 2), fontsize=120, color="black")
         if time_out_flag:
             sounds.timeout.play()
             time_out_flag = False
@@ -277,7 +288,7 @@ def update():
     # Bob section
     global status, timer
     if status == "play":
-        timer -= 1/60
+        timer -= 1 / 60
         if timer <= 0:
             status = "timeout"
         if keyboard.right:
@@ -394,5 +405,10 @@ snail = Actor(rand_snail_dir)
 random_location_snail()
 snail.image = rand_snail_dir
 snail.speed = 1
+
+# Define coin
+coin = Actor("coin")
+random_location_coin()
+clock.schedule_interval(random_location_coin, 4)
 
 pgzrun.go()
