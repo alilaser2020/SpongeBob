@@ -242,6 +242,12 @@ def draw():
     global pearl_flag, status, timer, time_out_flag
     if status == "home":
         mode.screen.blit("home", (0, 0))
+        box0 = pygame.Rect((0, 0), (600, 70))
+        box0.center = (WIDTH//2, 35)
+        mode.screen.draw.filled_rect(box0, (101, 205, 255))
+        mode.screen.draw.text("Notice!", center=(426, 20), fontsize=50, color="red")
+        mode.screen.draw.text("Final score for Bob & Patric: 50\nFinal score for Mr. Crab: 200",
+                              topleft=(WIDTH//2 - 150, 5), fontsize=40, color="blue")
         box1 = pygame.Rect((0, 0), (600, 70))
         box1.center = (WIDTH // 2, HEIGHT * 0.88)
         mode.screen.draw.filled_rect(box1, (255, 255, 0))
@@ -390,7 +396,6 @@ WIDTH = 1280
 HEIGHT = 720
 timer = 120
 status = "home"
-TITLE = "SpongeBob"
 pearl_flag = time_out_flag = True
 pearl_center = (940, 550)
 mode = sys.modules["__main__"]
